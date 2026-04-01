@@ -11,6 +11,15 @@ os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com/"
 os.environ["LANGCHAIN_PROJECT"] = "Retrieval-Augmented-Generation-LangGraph-Ollama"
 
+# Configuration
+DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG Applications/data"
+CHROMA_DIR = "/content/drive/MyDrive/chroma_financial_db"
+COLLECTION_NAME = "financial_docs"
+EMBEDDING_MODEL = 'embeddinggemma:300m'
+BASE_URL = 'http://127.0.0.1:11434'
+LLM_MODEL = "mistral:7b"
+DEBUG_PATH = "/content/drive/MyDrive/debug_logs"
+
 from langchain_core.tools import tool
 from scripts import utils
 
@@ -64,8 +73,8 @@ def retrieve_docs(query:str, k=5):
 
     retrieved_text = "\n".join(retrieved_text)
 
-    os.makedirs("debug_logs", exist_ok=True)
-    with open("debug_logs/retrieved_reranked_docs.md", "w", encoding='utf-8') as f:
+    os.makedirs(DEBUG_PATH, exist_ok=True)
+    with open(f"{DEBUG_PATH}/retrieved_reranked_docs.md", "w", encoding='utf-8') as f:
         f.write(retrieved_text)
 
     return retrieved_text

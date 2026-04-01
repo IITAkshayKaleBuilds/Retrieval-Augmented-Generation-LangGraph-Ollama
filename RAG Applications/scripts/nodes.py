@@ -29,9 +29,13 @@ os.environ["LANGCHAIN_PROJECT"] = "Retrieval-Augmented-Generation-LangGraph-Olla
 # =============================================================================
 # Configuration
 # =============================================================================
-
+DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG Applications/data"
+CHROMA_DIR = "/content/drive/MyDrive/chroma_financial_db"
+COLLECTION_NAME = "financial_docs"
+EMBEDDING_MODEL = 'embeddinggemma:300m'
+BASE_URL = 'http://127.0.0.1:11434'
 LLM_MODEL = "mistral:7b"
-BASE_URL = "http://127.0.0.1:11434"
+DEBUG_PATH = "/content/drive/MyDrive/debug_logs"
 
 llm = ChatOllama(model=LLM_MODEL, base_url=BASE_URL, reasoning=True)
 
@@ -101,8 +105,8 @@ def retrieve_node(state):
     combined_result = "\n\n".join(all_results)
 
 
-    os.makedirs('debug_logs', exist_ok=True)
-    with open('debug_logs/self_rag.md', 'w', encoding='utf-8') as f:
+    os.makedirs(DEBUG_PATH, exist_ok=True)
+    with open(f"{DEBUG_PATH}/self_rag.md", "w", encoding='utf-8') as f:
         f.write(combined_result)
 
     return {
@@ -179,8 +183,8 @@ def generate_node(state):
 
     response = llm.invoke(messages)
 
-    os.makedirs('debug_logs', exist_ok=True)
-    with open('debug_logs/self_rag_answer.md', 'w', encoding='utf-8') as f:
+    os.makedirs(DEBUG_PATH, exist_ok=True)
+    with open(f"{DEBUG_PATH}/self_rag_answer.md", "w", encoding='utf-8') as f:
         f.write(f"Query: {query}")
         f.write(response.content)
 

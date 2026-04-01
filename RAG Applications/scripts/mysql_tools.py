@@ -30,9 +30,13 @@ os.environ["LANGCHAIN_PROJECT"] = "Retrieval-Augmented-Generation-LangGraph-Olla
 # =============================================================================
 
 # LLM_MODEL = "mistral:7b"
+DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG Applications/data"
+CHROMA_DIR = "/content/drive/MyDrive/chroma_financial_db"
+COLLECTION_NAME = "financial_docs"
+EMBEDDING_MODEL = 'embeddinggemma:300m'
+BASE_URL = 'http://127.0.0.1:11434'
 LLM_MODEL = "mistral:7b"
-BASE_URL = "http://127.0.0.1:11434"
-
+DEBUG_PATH = "/content/drive/MyDrive/debug_logs"
 llm = ChatOllama(model=LLM_MODEL, base_url=BASE_URL, reasoning=True)
 
 response = llm.invoke("Hello, how are you?")
