@@ -96,7 +96,7 @@ def retrieve_node(state):
         print(f"[RETRIEVE] Query {idx}: {search_query}")
 
         # 3(Reranking) -> 3*10(Retrieval) -> 3*10*20 (MMR)
-        result = my_tools.retrieve_docs.invoke({'query': search_query, 'k': 3})
+        result = my_tools.retrieve_docs.invoke({'query': search_query, 'k': 3}) or ""
 
         text = f"## Query {idx}: {search_query}\n\n### Retrieved Documents:\n{result}"
         all_results.append(text)
