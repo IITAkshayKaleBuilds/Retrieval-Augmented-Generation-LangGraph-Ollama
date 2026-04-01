@@ -1,10 +1,16 @@
 # retrieve_docs
 # web_search
-from dotenv import load_dotenv
-load_dotenv()
-
-
 import os
+from google.colab import userdata
+
+# Load API key from Colab secrets
+os.environ["LANGSMITH_API_KEY"] = userdata.get("LANGSMITH_API_KEY")
+
+# Non-sensitive configs
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com/"
+os.environ["LANGCHAIN_PROJECT"] = "Retrieval-Augmented-Generation-LangGraph-Ollama"
+
 from langchain_core.tools import tool
 from scripts import utils
 

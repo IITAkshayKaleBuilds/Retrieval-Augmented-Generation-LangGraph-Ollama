@@ -15,8 +15,15 @@ from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 
 from langchain_community.utilities import SQLDatabase
 
-from dotenv import load_dotenv
-load_dotenv()
+from google.colab import userdata
+
+# Load API key from Colab secrets
+os.environ["LANGSMITH_API_KEY"] = userdata.get("LANGSMITH_API_KEY")
+
+# Non-sensitive configs
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com/"
+os.environ["LANGCHAIN_PROJECT"] = "Retrieval-Augmented-Generation-LangGraph-Ollama"
 
 # =============================================================================
 # Configuration
@@ -24,7 +31,7 @@ load_dotenv()
 
 # LLM_MODEL = "mistral:7b"
 LLM_MODEL = "mistral:7b"
-BASE_URL = "http://localhost:11434"
+BASE_URL = "http://127.0.0.1:11434"
 
 llm = ChatOllama(model=LLM_MODEL, base_url=BASE_URL, reasoning=True)
 

@@ -12,10 +12,10 @@ from rank_bm25 import BM25Plus
 # =============================================================================
 
 # ChromaDB Configuration (from PageRAG - Data Ingestion)
-CHROMA_DIR = "chroma_financial_db"
+CHROMA_DIR = "/content/drive/MyDrive/chroma_financial_db"
 COLLECTION_NAME = "financial_docs"
 EMBEDDING_MODEL = "embeddinggemma:300m"
-BASE_URL = "http://localhost:11434"
+BASE_URL = "http://127.0.0.1:11434"
 
 LLM_MODEL = "mistral:7b"
 
