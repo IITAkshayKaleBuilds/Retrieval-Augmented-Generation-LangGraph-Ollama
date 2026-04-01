@@ -14,10 +14,10 @@ from rank_bm25 import BM25Plus
 # ChromaDB Configuration (from PageRAG - Data Ingestion)
 CHROMA_DIR = "chroma_financial_db"
 COLLECTION_NAME = "financial_docs"
-EMBEDDING_MODEL = "nomic-embed-text"
+EMBEDDING_MODEL = "embeddinggemma:300m"
 BASE_URL = "http://localhost:11434"
 
-LLM_MODEL = "qwen3"
+LLM_MODEL = "mistral:7b"
 
 # ollama pull nomic-embed_text
 embeddings= OllamaEmbeddings(model=EMBEDDING_MODEL, base_url=BASE_URL, num_ctx=8192)

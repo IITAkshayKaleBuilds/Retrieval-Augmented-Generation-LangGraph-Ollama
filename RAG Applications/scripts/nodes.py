@@ -23,7 +23,7 @@ load_dotenv()
 # Configuration
 # =============================================================================
 
-LLM_MODEL = "qwen3"
+LLM_MODEL = "mistral:7b"
 BASE_URL = "http://localhost:11434"
 
 llm = ChatOllama(model=LLM_MODEL, base_url=BASE_URL, reasoning=True)
