@@ -4,7 +4,7 @@
 from RAG_Applications.scripts.my_tools import Test_my_tools_file
 from RAG_Applications.scripts.nodes import Test_nodes_file
 from RAG_Applications.scripts.utils import Test_utils_file
-from RAG_Applications.scripts.init import Test_init_file
+from RAG_Applications.scripts.__init__ import Test_init_file
 
 print("Running main file & test functions for RAG_Applications...")
 
