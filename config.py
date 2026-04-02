@@ -15,7 +15,7 @@ def setup_env():
     try:
         from google.colab import userdata
 
-        os.environ["LANGSMITH_API_KEY"] = userdata.get("LANGSMITH_API_KEY")
+        LANGSMITH_API_KEY = os.environ.get("LANGSMITH_API_KEY")
     except:
         print("Not running in Colab or secret not found")
 
