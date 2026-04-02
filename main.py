@@ -4,7 +4,7 @@
 from RAG_Applications.scripts.my_tools import Test_my_tools_file
 from RAG_Applications.scripts.nodes import Test_nodes_file
 from RAG_Applications.scripts.utils import Test_utils_file
-from RAG_Applications.scripts.__init__ import Test_init_file
+from RAG_Applications.scripts.__init__ import Testinit
 
 print("Running main file & test functions for RAG_Applications...")
 
@@ -12,5 +12,5 @@ if __name__ == "__main__":
     Test_my_tools_file()
     Test_nodes_file()
     Test_utils_file()
-    Test_init_file
+    Testinit()
     print("All test functions executed successfully.")
