@@ -13,7 +13,7 @@ DEBUG_PATH = "/content/drive/MyDrive/debug_logs"
 def setup_env():
     import os
     try:
-        from google.colab import userdata
+        #
 
         LANGSMITH_API_KEY = os.environ.get("LANGSMITH_API_KEY")
     except:

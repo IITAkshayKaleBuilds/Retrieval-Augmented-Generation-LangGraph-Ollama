@@ -1,7 +1,7 @@
 # retrieve_docs
 # web_search
 import os
-from google.colab import userdata
+#
 
 # Load API key from Colab secrets
 LANGSMITH_API_KEY = os.environ.get("LANGSMITH_API_KEY")
@@ -21,7 +21,7 @@ LLM_MODEL = "mistral:7b"
 DEBUG_PATH = "/content/drive/MyDrive/debug_logs"
 
 from langchain_core.tools import tool
-from scripts import utils
+from RAG_Applications.scripts import utils
 
 
 @tool

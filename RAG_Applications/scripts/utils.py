@@ -3,7 +3,7 @@
 from langchain_ollama import ChatOllama, OllamaEmbeddings
 from langchain_chroma import Chroma
 
-from scripts.schemas import ChunkMetadata, RankingKeywords
+from RAG_Applications.scripts.schemas import ChunkMetadata, RankingKeywords
 import re
 from rank_bm25 import BM25Plus
 

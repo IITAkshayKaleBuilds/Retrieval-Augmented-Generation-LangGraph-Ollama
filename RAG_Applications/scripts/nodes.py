@@ -14,9 +14,9 @@ from langchain_ollama import ChatOllama
 from langchain_core.messages import HumanMessage, SystemMessage
 from pydantic import BaseModel, Field
 
-from scripts import my_tools
+from RAG_Applications.scripts import my_tools
 
-from google.colab import userdata
+#
 
 # Load API key from Colab secrets
 LANGSMITH_API_KEY = os.environ.get("LANGSMITH_API_KEY")
