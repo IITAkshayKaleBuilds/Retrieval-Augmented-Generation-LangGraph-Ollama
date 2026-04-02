@@ -258,3 +258,6 @@ def rank_documents_by_keywords(docs, keywords, k=5):
     return [docs[i] for i in ranked_indices[:k]]
 
 
+def Test_utils_file():
+    print("This is the __utils__.py file for RAG Applications.")
+   

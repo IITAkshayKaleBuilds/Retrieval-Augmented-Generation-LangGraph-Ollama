@@ -324,4 +324,6 @@ def check_answer_quality(state):
         print("[ROUTER] Generation NOT grounded in the response")
         return 'generate'    
 
-
+def Test_nodes_file():
+    print("This is the __nodes__.py file for RAG Applications.")
+   

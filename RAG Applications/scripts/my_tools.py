@@ -111,3 +111,7 @@ def web_search(query:str, num_results: int = 10) -> str:
         formatted_results.append(text)
 
     return "\n\n".join(formatted_results)
+
+def Test_my_tools_file():
+    print("This is the __my tools__.py file for RAG Applications.")
+   
