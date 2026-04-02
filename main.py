@@ -1,12 +1,12 @@
 from config import setup_env
 setup_env()
 
-from RAG Applications.scripts.my_tools import Test_my_tools_file
-from RAG Applications.scripts.nodes import Test_nodes_file
-from RAG Applications.scripts.utils import Test_utils_file
-from RAG Applications.scripts.init import Test_init_file
+from RAG_Applications.scripts.my_tools import Test_my_tools_file
+from RAG_Applications.scripts.nodes import Test_nodes_file
+from RAG_Applications.scripts.utils import Test_utils_file
+from RAG_Applications.scripts.init import Test_init_file
 
-print("Running main file & test functions for RAG Applications...")
+print("Running main file & test functions for RAG_Applications...")
 
 if __name__ == "__main__":
     Test_my_tools_file()

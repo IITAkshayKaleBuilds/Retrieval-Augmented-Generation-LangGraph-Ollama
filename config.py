@@ -5,7 +5,7 @@ LLM_MODEL = "mistral:7b"
 EMBEDDING_MODEL = 'embeddinggemma:300m'
 BASE_URL = 'http://127.0.0.1:11434'
 
-DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG Applications/data"
+DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/data"
 CHROMA_DIR = "/content/drive/MyDrive/chroma_financial_db"
 COLLECTION_NAME = "financial_docs"
 DEBUG_PATH = "/content/drive/MyDrive/debug_logs"

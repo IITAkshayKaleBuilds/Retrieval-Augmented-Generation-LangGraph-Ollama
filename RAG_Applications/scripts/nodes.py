@@ -29,7 +29,7 @@ os.environ["LANGCHAIN_PROJECT"] = "Retrieval-Augmented-Generation-LangGraph-Olla
 # =============================================================================
 # Configuration
 # =============================================================================
-DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG Applications/data"
+DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/data"
 CHROMA_DIR = "/content/drive/MyDrive/chroma_financial_db"
 COLLECTION_NAME = "financial_docs"
 EMBEDDING_MODEL = 'embeddinggemma:300m'
@@ -325,5 +325,5 @@ def check_answer_quality(state):
         return 'generate'    
 
 def Test_nodes_file():
-    print("This is the __nodes__.py file for RAG Applications.")
+    print("This is the __nodes__.py file for RAG_Applications.")
    

@@ -12,7 +12,7 @@ os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com/"
 os.environ["LANGCHAIN_PROJECT"] = "Retrieval-Augmented-Generation-LangGraph-Ollama"
 
 # Configuration
-DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG Applications/data"
+DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/data"
 CHROMA_DIR = "/content/drive/MyDrive/chroma_financial_db"
 COLLECTION_NAME = "financial_docs"
 EMBEDDING_MODEL = 'embeddinggemma:300m'
@@ -113,5 +113,5 @@ def web_search(query:str, num_results: int = 10) -> str:
     return "\n\n".join(formatted_results)
 
 def Test_my_tools_file():
-    print("This is the __my tools__.py file for RAG Applications.")
+    print("This is the __my tools__.py file for RAG_Applications.")
    

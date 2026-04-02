@@ -30,7 +30,7 @@ os.environ["LANGCHAIN_PROJECT"] = "Retrieval-Augmented-Generation-LangGraph-Olla
 # =============================================================================
 
 # LLM_MODEL = "mistral:7b"
-DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG Applications/data"
+DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/data"
 CHROMA_DIR = "/content/drive/MyDrive/chroma_financial_db"
 COLLECTION_NAME = "financial_docs"
 EMBEDDING_MODEL = 'embeddinggemma:300m'

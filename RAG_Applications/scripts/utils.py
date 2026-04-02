@@ -12,7 +12,7 @@ from rank_bm25 import BM25Plus
 # =============================================================================
 
 # ChromaDB Configuration (from PageRAG - Data Ingestion)
-DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG Applications/data"
+DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/data"
 CHROMA_DIR = "/content/drive/MyDrive/chroma_financial_db"
 COLLECTION_NAME = "financial_docs"
 EMBEDDING_MODEL = 'embeddinggemma:300m'
@@ -259,5 +259,5 @@ def rank_documents_by_keywords(docs, keywords, k=5):
 
 
 def Test_utils_file():
-    print("This is the __utils__.py file for RAG Applications.")
+    print("This is the __utils__.py file for RAG_Applications.")
    
