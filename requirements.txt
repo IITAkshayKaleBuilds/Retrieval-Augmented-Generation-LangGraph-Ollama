@@ -10,6 +10,7 @@ langchain-core
 langchain-huggingface
 langchain-ollama
 langchain-openai
+langchain-chroma
 langgraph
 langsmith
 
