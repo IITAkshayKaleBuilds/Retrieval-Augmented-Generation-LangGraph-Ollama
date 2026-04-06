@@ -21,7 +21,7 @@ from docling.document_converter import DocumentConverter
 DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/data"
 CHROMA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/chroma_financial_db"
 COLLECTION_NAME = "financial_docs"
-EMBEDDING_MODEL = 'embeddinggemma:300m'
+EMBEDDING_MODEL = 'qwen3-embedding:0.6b'
 BASE_URL = 'http://127.0.0.1:11434'
 LLM_MODEL = "mistral:7b"
 DEBUG_PATH = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/debug_logs"

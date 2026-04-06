@@ -2,7 +2,7 @@
 import os
 
 LLM_MODEL = "mistral:7b"
-EMBEDDING_MODEL = 'embeddinggemma:300m'
+EMBEDDING_MODEL = 'qwen3-embedding:0.6b'
 BASE_URL = 'http://127.0.0.1:11434'
 
 DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/data"
