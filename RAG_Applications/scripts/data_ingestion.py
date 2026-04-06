@@ -17,6 +17,23 @@ from langchain_core.documents import Document
 
 from docling.document_converter import DocumentConverter
 
+# Configuration
+DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/data"
+CHROMA_DIR = "/content/drive/MyDrive/chroma_financial_db"
+COLLECTION_NAME = "financial_docs"
+EMBEDDING_MODEL = 'embeddinggemma:300m'
+BASE_URL = 'http://127.0.0.1:11434'
+LLM_MODEL = "mistral:7b"
+DEBUG_PATH = "/content/drive/MyDrive/debug_logs"
+
+embeddings= OllamaEmbeddings(model=EMBEDDING_MODEL, base_url=BASE_URL, num_ctx=8192)
+
+vector_store = Chroma(
+    collection_name=COLLECTION_NAME,
+    embedding_function=embeddings,
+    persist_directory=CHROMA_DIR
+)
+
 # ### Metadata Extraction
 def extract_metadata_from_filename(filename: str) -> dict:
 
@@ -59,6 +76,12 @@ def compute_file_hash(file_path: str) -> str:
         for byte_block in iter(lambda: f.read(4096), b""):
             sha256_hash.update(byte_block)
     return sha256_hash.hexdigest()
+
+# track the processed files
+existing_docs = vector_store.get(where={"file_hash": {"$ne": ""}}, include=['metadatas'])
+processed_hashes = [m.get('file_hash') for m in existing_docs['metadatas'] if m.get('file_hash')]
+processed_hashes = set(processed_hashes)
+existing_docs
 
 # ### Documents Ingestion in Vector DB
 
