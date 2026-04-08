@@ -130,7 +130,20 @@ def grade_documents_node(state):
 
                 If the document contains keyword(s) or semantic meaning related to the user query, grade it as relevant.
 
-                Give a binary score 'yes' or 'no' to indicate whether the document is relevant to the query."""
+                IMPORTANT:
+                RETURN ONLY A VALID JSON OBJECT. 
+                To indicate whether the document is relevant to the query.
+                
+                Format:
+                {
+                "binary_score": "yes" OR "no"
+                }
+
+                Rules:
+                - Do NOT return anything else
+                - Do NOT explain
+                - Do NOT add text
+                - ONLY return JSON"""
     
 
     system_msg = SystemMessage(system_prompt)
@@ -224,7 +237,17 @@ def transform_query_node(state):
                 ["Amazon revenue 2022", "Amazon revenue 2023", "Amazon revenue 2024"]
                 
                 - "What were the main risks for Microsoft in 2023?" →
-                ["Microsoft risk factors 2023", "Microsoft business challenges 2023"]"""
+                ["Microsoft risk factors 2023", "Microsoft business challenges 2023"]
+                
+                IMPORTANT:
+                Return ONLY valid JSON.
+
+                Format:
+                {
+                "search_queries": ["query1", "query2"]
+                }
+
+                No explanation. Only JSON Output."""
                 
 
     query_context = f"Original Query: {query}"
@@ -282,7 +305,16 @@ def check_answer_quality(state):
     
     hallucination_prompt = """You are a grader assessing whether an LLM generation is grounded in / supported by a set of retrieved facts.
 
-    Give a binary score 'yes' or 'no'. 'Yes' means that the answer is grounded in / supported by the set of facts."""
+                            IMPORTANT:
+                            Return ONLY valid JSON.
+
+                            Format:
+                            {
+                            "binary_score": "yes" OR "no"
+                            }
+
+                            No explanation. No text. Only JSON Output.
+                            "binary_score": "yes", means that the answer is grounded in / supported by the set of facts."""
 
     system_msg = SystemMessage(hallucination_prompt)
     user_msg = HumanMessage(f"Set of facts:\n\n{documents}\n\nLLM Generation: {generation}")
@@ -302,7 +334,16 @@ def check_answer_quality(state):
 
         answer_prompt = """You are a grader assessing whether an answer addresses / resolves a query.
 
-                        Give a binary score 'yes' or 'no'. 'Yes' means that the answer resolves the query."""
+                        IMPORTANT:
+                        Return ONLY valid JSON.
+
+                        Format:
+                        {
+                        "binary_score": "yes" OR "no"
+                        }
+
+                        No explanation. No text. Only JSON Output.
+                        "binary_score": "yes", means that the answer resolves the query."""
 
         system_msg = SystemMessage(answer_prompt)
 
@@ -324,6 +365,3 @@ def check_answer_quality(state):
         print("[ROUTER] Generation NOT grounded in the response")
         return 'generate'    
 
-def Test_nodes_file():
-    print("This is the __nodes__.py file for RAG_Applications.")
-   

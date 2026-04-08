@@ -29,7 +29,7 @@ vector_store = Chroma(
     persist_directory=CHROMA_DIR
 )
 
-llm = ChatOllama(model=LLM_MODEL, base_url=BASE_URL)
+llm = ChatOllama(model=LLM_MODEL, base_url=BASE_URL, temperature=0.0)
 
 # ### Extract Filters and Ranking Keywords
 
@@ -60,8 +60,18 @@ def extract_filters(user_query:str):
                 "Apple 2023 annual report" -> {{"company_name": "apple", "doc_type": "10-k", "fiscal_year": 2023}}
                 "Tesla profitability" -> {{"company_name": "tesla"}}
 
-                Extract metadata:
-                """
+                IMPORTANT:
+                Return ONLY valid JSON.
+
+                Format example:
+                {
+                "company_name": "amazon",
+                "doc_type": "10-q",
+                "fiscal_year": 2024,
+                "fiscal_quarter": "q3"
+                }
+
+                Return only JSON. No explanation."""
     
     metadata = llm_structured.invoke(prompt)
     filters = metadata.model_dump(exclude_none=True)
@@ -72,7 +82,7 @@ def extract_filters(user_query:str):
 # ### Generate Ranking Keywords
 
 def generate_ranking_keywords(user_query: str):
-    # ALT + Z
+    
     prompt = f"""Generate EXACTLY 5 financial keywords from SEC filings terminology.
 
                 USER QUERY: {user_query}
@@ -102,8 +112,15 @@ def generate_ranking_keywords(user_query: str):
                 "cash flow performance" -> ["consolidated statements of cash flows", "cash flows from operating activities", "net cash provided by operating activities", "free cash flow", "operating activities"]
                 "balance sheet strength" -> ["consolidated balance sheets", "total assets", "stockholders equity", "cash and cash equivalents", "long-term debt"]
 
-                Generate EXACTLY 5 keywords:
-                """
+                IMPORTANT:
+                Return ONLY valid JSON.
+
+                Format:
+                {
+                "keywords": ["k1", "k2", "k3", "k4", "k5"]
+                }
+
+                No explanation. Only JSON."""
     
     llm_structured = llm.with_structured_output(RankingKeywords)
     result = llm_structured.invoke(prompt)
@@ -214,7 +231,7 @@ def extract_headings_with_content(text):
 
 
 # ### Rank documents using BM25Plus
-# https://pypi.org/project/rank-bm25/
+
 def rank_documents_by_keywords(docs, keywords, k=5):
     # 5 -> 20 retriever -> mmr 20*20
     """
@@ -257,7 +274,3 @@ def rank_documents_by_keywords(docs, keywords, k=5):
 
     return [docs[i] for i in ranked_indices[:k]]
 
-
-def Test_utils_file():
-    print("This is the __utils__.py file for RAG_Applications.")
-   
