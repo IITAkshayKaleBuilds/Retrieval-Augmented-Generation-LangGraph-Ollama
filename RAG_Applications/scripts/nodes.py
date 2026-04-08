@@ -240,14 +240,12 @@ def transform_query_node(state):
                 ["Microsoft risk factors 2023", "Microsoft business challenges 2023"]
                 
                 IMPORTANT:
-                Return ONLY valid JSON.
+                Respond in JSON format.
 
                 Format:
-                {
+                {{
                 "search_queries": ["query1", "query2"]
-                }
-
-                No explanation. Only JSON Output."""
+                }}"""
                 
 
     query_context = f"Original Query: {query}"
@@ -306,14 +304,13 @@ def check_answer_quality(state):
     hallucination_prompt = """You are a grader assessing whether an LLM generation is grounded in / supported by a set of retrieved facts.
 
                             IMPORTANT:
-                            Return ONLY valid JSON.
+                            Respond in JSON format.
 
                             Format:
-                            {
+                            {{
                             "binary_score": "yes" OR "no"
-                            }
-
-                            No explanation. No text. Only JSON Output.
+                            }}
+                            
                             "binary_score": "yes", means that the answer is grounded in / supported by the set of facts."""
 
     system_msg = SystemMessage(hallucination_prompt)
@@ -335,14 +332,13 @@ def check_answer_quality(state):
         answer_prompt = """You are a grader assessing whether an answer addresses / resolves a query.
 
                         IMPORTANT:
-                        Return ONLY valid JSON.
+                        Respond in JSON format.
 
                         Format:
                         {
                         "binary_score": "yes" OR "no"
                         }
 
-                        No explanation. No text. Only JSON Output.
                         "binary_score": "yes", means that the answer resolves the query."""
 
         system_msg = SystemMessage(answer_prompt)

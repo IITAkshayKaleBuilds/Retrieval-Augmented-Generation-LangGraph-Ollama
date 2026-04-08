@@ -61,7 +61,8 @@ def extract_filters(user_query:str):
                 "Tesla profitability" -> {{"company_name": "tesla"}}
 
                 IMPORTANT:
-                Return ONLY valid JSON.
+            
+                Respond in JSON format.
 
                 Format example:
                 {{
@@ -69,9 +70,7 @@ def extract_filters(user_query:str):
                 "doc_type": "10-q",
                 "fiscal_year": 2024,
                 "fiscal_quarter": "q3"
-                }}
-
-                Return only JSON. No explanation."""
+                }}."""
     
     metadata = llm_structured.invoke(prompt)
     filters = metadata.model_dump(exclude_none=True)
@@ -113,14 +112,12 @@ def generate_ranking_keywords(user_query: str):
                 "balance sheet strength" -> ["consolidated balance sheets", "total assets", "stockholders equity", "cash and cash equivalents", "long-term debt"]
 
                 IMPORTANT:
-                Return ONLY valid JSON.
+                Respond in JSON format.
 
                 Format:
                 {{
                 "keywords": ["k1", "k2", "k3", "k4", "k5"]
-                }}
-
-                No explanation. Only JSON."""
+                }}."""
     
     llm_structured = llm.with_structured_output(RankingKeywords)
     result = llm_structured.invoke(prompt)
