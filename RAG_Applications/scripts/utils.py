@@ -64,12 +64,12 @@ def extract_filters(user_query:str):
                 Return ONLY valid JSON.
 
                 Format example:
-                {
+                {{
                 "company_name": "amazon",
                 "doc_type": "10-q",
                 "fiscal_year": 2024,
                 "fiscal_quarter": "q3"
-                }
+                }}
 
                 Return only JSON. No explanation."""
     
@@ -116,9 +116,9 @@ def generate_ranking_keywords(user_query: str):
                 Return ONLY valid JSON.
 
                 Format:
-                {
+                {{
                 "keywords": ["k1", "k2", "k3", "k4", "k5"]
-                }
+                }}
 
                 No explanation. Only JSON."""
     
