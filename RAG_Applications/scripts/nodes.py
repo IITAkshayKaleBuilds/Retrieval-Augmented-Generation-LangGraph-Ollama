@@ -1,8 +1,13 @@
 #
+from urllib import response
+
+from langchain_core import documents
+from pytube import query
 from typing_extensions import TypedDict, Annotated
 from typing import List
 import os
 import operator
+from utils import robust_json_parser
 
 from langgraph.graph import StateGraph, START, END
 from langchain_ollama import ChatOllama
@@ -93,9 +98,7 @@ def retrieve_node(state):
         text = f"## Query {idx}: {search_query}\n\n### Retrieved Documents:\n{result}"
         all_results.append(text)
 
-
     combined_result = "\n\n".join(all_results)
-
 
     os.makedirs(DEBUG_PATH, exist_ok=True)
     with open(f"{DEBUG_PATH}/self_rag.md", "w", encoding='utf-8') as f:
@@ -114,27 +117,38 @@ def grade_documents_node(state):
     query = get_latest_user_query(state['messages'])
     documents = state.get('retrieved_docs', 'No document available!')
 
-    llm_structured = llm.with_structured_output(GradeDocuments)
-
     system_prompt = """You are a grader assessing relevance of retrieved documents to a user query.
 
                 It does not need to be a stringent test. The goal is to filter out erroneous retrievals.
 
                 If the document contains keyword(s) or semantic meaning related to the user query, grade it as relevant.
 
-                Give a binary score 'yes' or 'no' to indicate whether the document is relevant to the query."""
+                Respond in JSON format.
+
+                Format:
+                {
+                    "binary_score": "yes" OR "no"
+                } 
+                to indicate whether the document is relevant to the query."""
     
     system_msg = SystemMessage(system_prompt)
 
     messages = [system_msg, HumanMessage(f"Retrieved Document: {documents}\n\nUser query: {query}")]
 
-    response = llm_structured.invoke(messages)
+    response = llm.invoke(messages)
+    print("RAW GRADE OUTPUT:", response.content)
+    parsed = robust_json_parser(response.content)
 
-    print(f"[GRADE] Relevance:  {response.binary_score}")
+    if parsed and "binary_score" in parsed:
+        score = parsed["binary_score"]
+    else:
+        print("Missing binary_score, defaulting to no")
+        score = "no"
 
-    if response.binary_score == 'yes':
+    score = str(score).lower().strip()
+
+    if score == "yes":
         return {'retrieved_docs': documents}
-    
     else:
         return {'retrieved_docs': ''}
 
@@ -189,8 +203,6 @@ def transform_query_node(state):
     query = get_latest_user_query(state['messages'])
     rewritten_queries = state.get('rewritten_queries', [])
 
-    llm_structured = llm.with_structured_output(SearchQueries)
-
     system_prompt = """You are a query re-writer that decomposes complex queries into focused search queries optimized for vectorstore retrieval.
 
                 DECOMPOSITION STRATEGY:
@@ -216,6 +228,12 @@ def transform_query_node(state):
                 
                 - "What were the main risks for Microsoft in 2023?" →
                 ["Microsoft risk factors 2023", "Microsoft business challenges 2023"]
+                Respond in JSON format.
+
+                Format:
+                {
+                    "search_queries": ["q1", "q2", "q3"]
+                }
                 """
                 
 
@@ -231,16 +249,22 @@ def transform_query_node(state):
     user_msg = HumanMessage(query_context)
 
     messages = [system_msg, user_msg]
-    response = llm_structured.invoke(messages)
+    
+    response = llm.invoke(messages)
+    parsed = robust_json_parser(response.content)
 
-    new_queries = response.search_queries
+    if parsed and "search_queries" in parsed:
+        queries = parsed["search_queries"]
 
-    print(f"New Search Queries: {new_queries}")
+        if not isinstance(queries, list):
+            print("search_queries not list, fixing")
+            queries = [str(queries)]
 
-    return {
-        "rewritten_queries": new_queries
-    }
+    else:
+        print("Using fallback query")
+        queries = [query]
 
+    return {"rewritten_queries": queries}
 
 # ### Router Logic
 
@@ -269,18 +293,24 @@ def check_answer_quality(state):
     documents = state.get('retrieved_docs', '')
     generation = state['messages'][-1].content
 
-    llm_hallucinations = llm.with_structured_output(GradeHallucinations)
-    
     hallucination_prompt = """You are a grader assessing whether an LLM generation is grounded in / supported by a set of retrieved facts.
-    Give a binary score 'yes' or 'no'. 'Yes' means that the answer is grounded in / supported by the set of facts."""
+                            Respond in JSON format.
+
+                            Format:
+                            {
+                                "binary_score": "yes" OR "no"
+                            } 
+                            'yes' means that the answer is grounded in / supported by the set of facts."""
 
     system_msg = SystemMessage(hallucination_prompt)
     user_msg = HumanMessage(f"Set of facts:\n\n{documents}\n\nLLM Generation: {generation}")
 
     messages = [system_msg, user_msg]
-    response = llm_hallucinations.invoke(messages)
+    response = llm.invoke(messages)
+    parsed = robust_json_parser(response.content)
 
-    hallucination_grade = response.binary_score
+    hallucination_grade = parsed.get("binary_score", "no") if parsed else "no"
+    hallucination_grade = str(hallucination_grade).lower().strip()
 
     # if result is grounded into the facts or retrieved docs
     if hallucination_grade == 'yes':
@@ -288,11 +318,15 @@ def check_answer_quality(state):
         print("[ROUTER] Generation is gounded in documents")
 
         print("[ROUTER] Checking answer quality")
-        llm_answer = llm.with_structured_output(GradeAnswer)
+        llm_answer = llm
 
         answer_prompt = """You are a grader assessing whether an answer addresses / resolves a query.
-
-        Give a binary score 'yes' or 'no'. 'Yes' means that the answer resolves the query."""
+                        Respond in JSON format.
+                        Format:
+                        {
+                            "binary_score": "yes" OR "no"
+                        } 
+                        'Yes' means that the answer resolves the query."""
 
         system_msg = SystemMessage(answer_prompt)
 
@@ -301,7 +335,15 @@ def check_answer_quality(state):
         messages = [system_msg, user_msg]
 
         answer_response = llm_answer.invoke(messages)
-        answer_grade = answer_response.binary_score
+        parsed = robust_json_parser(answer_response.content)
+
+        if parsed and "binary_score" in parsed:
+            answer_grade = parsed["binary_score"]
+        else:
+            print("Missing binary_score, defaulting to no")
+            answer_grade = "no"
+
+        answer_grade = str(answer_grade).lower().strip()
 
         if answer_grade=='yes':
             print('[ROUTER] generation is good. - USEFUL')

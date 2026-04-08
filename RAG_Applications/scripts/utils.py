@@ -1,5 +1,9 @@
 # # RAG Data Retrieval and Re-Ranking
 
+import json
+import re
+from urllib import response
+
 from langchain_ollama import ChatOllama, OllamaEmbeddings
 from langchain_chroma import Chroma
 
@@ -35,8 +39,6 @@ llm = ChatOllama(model=LLM_MODEL, base_url=BASE_URL, temperature=0.0)
 
 def extract_filters(user_query:str):
 
-    llm_structured = llm.with_structured_output(ChunkMetadata)
-
     prompt = f"""Extract metadata filters from the query. Return None for fields not mentioned.
 
                 USER QUERY: {user_query}
@@ -60,14 +62,29 @@ def extract_filters(user_query:str):
                 "Apple 2023 annual report" -> {{"company_name": "apple", "doc_type": "10-k", "fiscal_year": 2023}}
                 "Tesla profitability" -> {{"company_name": "tesla"}}
 
-                Extract metadata:
+                Respond in JSON format.
+
+                Format:
+                {
+                    "company_name": "amazon",
+                    "doc_type": "10-k",
+                    "fiscal_year": 2024,
+                    "fiscal_quarter": "q3"
+                }
+                Return ONLY valid JSON.
                 """
-    
-    metadata = llm_structured.invoke(prompt)
-    filters = metadata.model_dump(exclude_none=True)
+    response = llm.invoke(prompt)
+    parsed = robust_json_parser(response.content)
 
-    return filters
-
+    if parsed:
+        try:
+            validated = ChunkMetadata(**parsed)
+            return validated.model_dump()
+        except Exception:
+            print("Schema validation failed:", parsed)
+            return {}
+    else:
+        return {}
 
 # ### Generate Ranking Keywords
 
@@ -102,13 +119,27 @@ def generate_ranking_keywords(user_query: str):
                 "cash flow performance" -> ["consolidated statements of cash flows", "cash flows from operating activities", "net cash provided by operating activities", "free cash flow", "operating activities"]
                 "balance sheet strength" -> ["consolidated balance sheets", "total assets", "stockholders equity", "cash and cash equivalents", "long-term debt"]
 
-                Generate EXACTLY 5 keywords:
+                Respond in JSON format.
+
+                Format:
+                {
+                "keywords": ["k1", "k2", "k3", "k4", "k5"]
+                }
+                Return ONLY valid JSON.
                 """
     
-    llm_structured = llm.with_structured_output(RankingKeywords)
-    result = llm_structured.invoke(prompt)
+    response = llm.invoke(prompt)
+    parsed = robust_json_parser(response.content)
 
-    return result.keywords
+    if parsed:
+        try:
+            validated = RankingKeywords(**parsed)
+            return validated.keywords
+        except Exception:
+            print("Keyword validation failed:", parsed)
+            return []
+    else:
+        return []
 
 # ### Search the Doc from Vector DB
 
@@ -257,3 +288,27 @@ def rank_documents_by_keywords(docs, keywords, k=5):
 
     return [docs[i] for i in ranked_indices[:k]]
 
+def robust_json_parser(raw_text):
+    if not raw_text or raw_text.strip() == "":
+        print("Empty LLM output")
+        return None
+
+    try:
+        clean_text = re.sub(r'<think>.*?</think>', '', raw_text, flags=re.DOTALL)
+        clean_text = re.sub(r'```json|```', '', clean_text)
+        clean_text = clean_text.strip()
+
+        json_match = re.search(r'\{.*\}', clean_text, re.DOTALL)
+
+        if json_match:
+            json_str = json_match.group(0)
+        else:
+            print("No JSON found:", clean_text)
+            return None
+
+        return json.loads(json_str)
+
+    except Exception as e:
+        print(" JSON parsing failed")
+        print("RAW:", raw_text)
+        return None

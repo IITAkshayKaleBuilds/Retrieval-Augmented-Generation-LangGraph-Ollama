@@ -2,6 +2,8 @@
 # web_search
 import os
 
+from pytube import query
+
 # Load API key from Colab secrets
 LANGSMITH_API_KEY = os.environ.get("LANGSMITH_API_KEY")
 
@@ -19,6 +21,7 @@ BASE_URL = 'http://127.0.0.1:11434'
 LLM_MODEL = "qwen3.5:9b"
 DEBUG_PATH = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/debug_logs"
 
+from duckdb import query
 from langchain_core.tools import tool
 from RAG_Applications.scripts import utils
 
@@ -46,8 +49,15 @@ def retrieve_docs(query:str, k=5):
     results = utils.search_docs(query, filters, ranking_keywords, k=10*k)
 
     # rank retrieved docs
-    docs = utils.rank_documents_by_keywords(results, ranking_keywords, k=k)
+    if not results:
+        print("No results from vector DB")
+        return f"No documents found for the query: '{query}'."
 
+    docs = utils.rank_documents_by_keywords(results, ranking_keywords, k=k)
+    if not docs:
+        print("No documents after ranking")
+        return f"No relevant documents found after ranking for query: '{query}'."
+    
     print(f"[RETRIEVED] {len(docs)} documents")
 
     # format extracted docs or chunks
