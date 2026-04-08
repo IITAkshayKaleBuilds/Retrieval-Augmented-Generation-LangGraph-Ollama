@@ -1,9 +1,4 @@
-# 🔗 Join the Discord Community: https://discord.gg/RFjwbkNa
-# 
-# CLT + K CLT + 0
-# CLT + K CLT + J
-# ![image.png](attachment:image.png)
-
+#
 from typing_extensions import TypedDict, Annotated
 from typing import List
 import os
@@ -15,8 +10,6 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from pydantic import BaseModel, Field
 
 from RAG_Applications.scripts import my_tools
-
-#
 
 # Load API key from Colab secrets
 LANGSMITH_API_KEY = os.environ.get("LANGSMITH_API_KEY")
@@ -74,7 +67,6 @@ def get_latest_user_query(messages:list):
     return messages[0].content if messages else ''
 
 
-
 # =============================================================================
 # LangGraph Nodes
 # =============================================================================
@@ -130,22 +122,8 @@ def grade_documents_node(state):
 
                 If the document contains keyword(s) or semantic meaning related to the user query, grade it as relevant.
 
-                IMPORTANT:
-                RETURN ONLY A VALID JSON OBJECT. 
-                To indicate whether the document is relevant to the query.
-                
-                Format:
-                {
-                "binary_score": "yes" OR "no"
-                }
-
-                Rules:
-                - Do NOT return anything else
-                - Do NOT explain
-                - Do NOT add text
-                - ONLY return JSON"""
+                Give a binary score 'yes' or 'no' to indicate whether the document is relevant to the query."""
     
-
     system_msg = SystemMessage(system_prompt)
 
     messages = [system_msg, HumanMessage(f"Retrieved Document: {documents}\n\nUser query: {query}")]
@@ -238,14 +216,7 @@ def transform_query_node(state):
                 
                 - "What were the main risks for Microsoft in 2023?" →
                 ["Microsoft risk factors 2023", "Microsoft business challenges 2023"]
-                
-                IMPORTANT:
-                Respond in JSON format.
-
-                Format:
-                {{
-                "search_queries": ["query1", "query2"]
-                }}"""
+                """
                 
 
     query_context = f"Original Query: {query}"
@@ -269,7 +240,6 @@ def transform_query_node(state):
     return {
         "rewritten_queries": new_queries
     }
-
 
 
 # ### Router Logic
@@ -302,16 +272,7 @@ def check_answer_quality(state):
     llm_hallucinations = llm.with_structured_output(GradeHallucinations)
     
     hallucination_prompt = """You are a grader assessing whether an LLM generation is grounded in / supported by a set of retrieved facts.
-
-                            IMPORTANT:
-                            Respond in JSON format.
-
-                            Format:
-                            {{
-                            "binary_score": "yes" OR "no"
-                            }}
-                            
-                            "binary_score": "yes", means that the answer is grounded in / supported by the set of facts."""
+    Give a binary score 'yes' or 'no'. 'Yes' means that the answer is grounded in / supported by the set of facts."""
 
     system_msg = SystemMessage(hallucination_prompt)
     user_msg = HumanMessage(f"Set of facts:\n\n{documents}\n\nLLM Generation: {generation}")
@@ -331,15 +292,7 @@ def check_answer_quality(state):
 
         answer_prompt = """You are a grader assessing whether an answer addresses / resolves a query.
 
-                        IMPORTANT:
-                        Respond in JSON format.
-
-                        Format:
-                        {
-                        "binary_score": "yes" OR "no"
-                        }
-
-                        "binary_score": "yes", means that the answer resolves the query."""
+        Give a binary score 'yes' or 'no'. 'Yes' means that the answer resolves the query."""
 
         system_msg = SystemMessage(answer_prompt)
 

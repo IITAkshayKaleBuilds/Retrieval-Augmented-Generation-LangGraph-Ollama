@@ -1,7 +1,6 @@
 # retrieve_docs
 # web_search
 import os
-#
 
 # Load API key from Colab secrets
 LANGSMITH_API_KEY = os.environ.get("LANGSMITH_API_KEY")
@@ -53,7 +52,7 @@ def retrieve_docs(query:str, k=5):
 
     # format extracted docs or chunks
     if len(docs)==0:
-        return f"No ducuments found for the query: '{query}'. Try rephrasing query or use different filter."
+        return f"No documents found for the query: '{query}'. Try rephrasing query or use different filter."
     
     # final format
     # --- Document {i} ---

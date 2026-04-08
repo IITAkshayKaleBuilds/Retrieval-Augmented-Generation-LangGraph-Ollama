@@ -60,17 +60,8 @@ def extract_filters(user_query:str):
                 "Apple 2023 annual report" -> {{"company_name": "apple", "doc_type": "10-k", "fiscal_year": 2023}}
                 "Tesla profitability" -> {{"company_name": "tesla"}}
 
-                IMPORTANT:
-            
-                Respond in JSON format.
-
-                Format example:
-                {{
-                "company_name": "amazon",
-                "doc_type": "10-q",
-                "fiscal_year": 2024,
-                "fiscal_quarter": "q3"
-                }}."""
+                Extract metadata:
+                """
     
     metadata = llm_structured.invoke(prompt)
     filters = metadata.model_dump(exclude_none=True)
@@ -111,13 +102,8 @@ def generate_ranking_keywords(user_query: str):
                 "cash flow performance" -> ["consolidated statements of cash flows", "cash flows from operating activities", "net cash provided by operating activities", "free cash flow", "operating activities"]
                 "balance sheet strength" -> ["consolidated balance sheets", "total assets", "stockholders equity", "cash and cash equivalents", "long-term debt"]
 
-                IMPORTANT:
-                Respond in JSON format.
-
-                Format:
-                {{
-                "keywords": ["k1", "k2", "k3", "k4", "k5"]
-                }}."""
+                Generate EXACTLY 5 keywords:
+                """
     
     llm_structured = llm.with_structured_output(RankingKeywords)
     result = llm_structured.invoke(prompt)
