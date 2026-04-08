@@ -17,7 +17,7 @@ CHROMA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Appli
 COLLECTION_NAME = "financial_docs"
 EMBEDDING_MODEL = 'qwen3-embedding:0.6b'
 BASE_URL = 'http://127.0.0.1:11434'
-LLM_MODEL = "qwen3.5:4b"
+LLM_MODEL = "qwen3.5:9b"
 DEBUG_PATH = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/debug_logs"
 
 # ollama pull nomic-embed_text

@@ -1,7 +1,7 @@
 # config.py
 import os
 
-LLM_MODEL = "qwen3.5:4b"
+LLM_MODEL = "qwen3.5:9b"
 EMBEDDING_MODEL = 'qwen3-embedding:0.6b'
 BASE_URL = 'http://127.0.0.1:11434'
 

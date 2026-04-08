@@ -29,13 +29,13 @@ os.environ["LANGCHAIN_PROJECT"] = "Retrieval-Augmented-Generation-LangGraph-Olla
 # Configuration
 # =============================================================================
 
-# LLM_MODEL = "qwen3.5:4b"
+# LLM_MODEL = "qwen3.5:9b"
 DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/data"
 CHROMA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/chroma_financial_db"
 COLLECTION_NAME = "financial_docs"
 EMBEDDING_MODEL = 'qwen3-embedding:0.6b'
 BASE_URL = 'http://127.0.0.1:11434'
-LLM_MODEL = "qwen3.5:4b"
+LLM_MODEL = "qwen3.5:9b"
 DEBUG_PATH = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/debug_logs"
 llm = ChatOllama(model=LLM_MODEL, base_url=BASE_URL, reasoning=True)
 
