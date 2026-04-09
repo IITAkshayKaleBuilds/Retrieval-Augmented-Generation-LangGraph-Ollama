@@ -2,7 +2,7 @@
 import os
 
 LLM_MODEL = "gemma4:26b"
-EMBEDDING_MODEL = 'snowflake-arctic-embed:335m'
+EMBEDDING_MODEL = 'qwen3-embedding:4b'
 BASE_URL = 'http://127.0.0.1:11434'
 
 DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/data"
