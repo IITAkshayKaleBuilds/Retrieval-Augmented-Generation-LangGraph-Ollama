@@ -145,6 +145,8 @@ def generate_ranking_keywords(user_query: str):
 
 def build_search_kwargs(filters, ranking_keywords, k=3):
 
+    filters = {k: v for k, v in filters.items() if v is not None}
+    
     search_kwargs = {"k": k, 'fetch_k': k*20}
 
     if filters:
