@@ -65,12 +65,12 @@ def extract_filters(user_query:str):
                 Respond in JSON format.
 
                 Format:
-                {
+                {{
                     "company_name": "amazon",
                     "doc_type": "10-k",
                     "fiscal_year": 2024,
                     "fiscal_quarter": "q3"
-                }
+                }}
                 Return ONLY valid JSON.
                 """
     response = llm.invoke(prompt)
@@ -122,9 +122,9 @@ def generate_ranking_keywords(user_query: str):
                 Respond in JSON format.
 
                 Format:
-                {
+                {{
                 "keywords": ["k1", "k2", "k3", "k4", "k5"]
-                }
+                }}
                 Return ONLY valid JSON.
                 """
     
