@@ -1,8 +1,8 @@
 # config.py
 import os
 
-LLM_MODEL = "qwen3.5:9b"
-EMBEDDING_MODEL = 'qwen3-embedding:0.6b'
+LLM_MODEL = "gemma4:26b"
+EMBEDDING_MODEL = 'snowflake-arctic-embed:335m'
 BASE_URL = 'http://127.0.0.1:11434'
 
 DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/data"

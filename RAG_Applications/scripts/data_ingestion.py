@@ -21,9 +21,9 @@ from docling.document_converter import DocumentConverter
 DATA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/data"
 CHROMA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/chroma_financial_db"
 COLLECTION_NAME = "financial_docs"
-EMBEDDING_MODEL = 'qwen3-embedding:0.6b'
+EMBEDDING_MODEL = 'snowflake-arctic-embed:335m'
 BASE_URL = 'http://127.0.0.1:11434'
-LLM_MODEL = "qwen3.5:9b"
+LLM_MODEL = "gemma4:26b"
 DEBUG_PATH = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/debug_logs"
 
 embeddings= OllamaEmbeddings(model=EMBEDDING_MODEL, base_url=BASE_URL, num_ctx=8192)
