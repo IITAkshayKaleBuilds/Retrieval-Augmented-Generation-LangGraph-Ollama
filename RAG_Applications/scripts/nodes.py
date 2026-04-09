@@ -264,7 +264,10 @@ def transform_query_node(state):
         print("Using fallback query")
         queries = [query]
 
-    return {"rewritten_queries": queries}
+    return {
+    "rewritten_queries": queries,
+    "retry_count": state.get("retry_count", 0) + 1
+    }
 
 # ### Router Logic
 
@@ -277,9 +280,15 @@ def should_generate(state):
     print("[ROUTER] Assess graded documents")
 
     retrieved_docs = state.get('retrieved_docs', '')
+    retry_count = state.get("retry_count", 0)
     
     if not retrieved_docs or retrieved_docs.strip() == '':
-        print(f"[ROUTER] No relevant documents - transforming query")
+
+        if retry_count >= 3:
+            print("Max retries reached. Forcing final answer generation.")
+            return 'generate'   # fallback (prevents infinite loop)
+
+        print(f"[ROUTER] Retry {retry_count + 1} → transforming query")
         return 'transform_query'
 
     else:
