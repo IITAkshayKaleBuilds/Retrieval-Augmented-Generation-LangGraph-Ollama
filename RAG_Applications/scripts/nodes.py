@@ -284,7 +284,7 @@ def should_generate(state):
     
     if not retrieved_docs or retrieved_docs.strip() == '':
 
-        if retry_count >= 3:
+        if retry_count >= 2:
             print("Max retries reached. Forcing final answer generation.")
             return 'generate'   # fallback (prevents infinite loop)
 
@@ -297,7 +297,7 @@ def should_generate(state):
 
 # Check for hallucinations and whether answer addresses query
 def check_answer_quality(state):
-
+    retry_count = state.get("retry_count", 0)
     query = get_latest_user_query(state['messages'])
     documents = state.get('retrieved_docs', '')
     generation = state['messages'][-1].content
@@ -363,5 +363,10 @@ def check_answer_quality(state):
 
     else:
         print("[ROUTER] Generation NOT grounded in the response")
-        return 'generate'    
+
+        if retry_count >= 2:
+            print("Max generation retries reached. Returning answer anyway.")
+            return END   # STOP LOOP
+
+        return 'generate'
 
