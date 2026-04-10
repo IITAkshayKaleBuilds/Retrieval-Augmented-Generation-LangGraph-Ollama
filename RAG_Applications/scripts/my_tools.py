@@ -18,7 +18,7 @@ CHROMA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Appli
 COLLECTION_NAME = "financial_docs"
 EMBEDDING_MODEL = 'qwen3-embedding:4b'
 BASE_URL = 'http://127.0.0.1:11434'
-LLM_MODEL = "gemma4:26b"
+LLM_MODEL = "deepseek-r1:14b"
 DEBUG_PATH = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/debug_logs"
 
 from duckdb import query
@@ -54,6 +54,7 @@ def retrieve_docs(query:str, k=5):
         return f"No documents found for the query: '{query}'."
 
     docs = utils.rank_documents_by_keywords(results, ranking_keywords, k=k)
+    docs = docs[:2]
     if not docs:
         print("No documents after ranking")
         return f"No relevant documents found after ranking for query: '{query}'."

@@ -11,7 +11,7 @@ from scripts.utils import robust_json_parser
 
 from langgraph.graph import StateGraph, START, END
 from langchain_ollama import ChatOllama
-from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from pydantic import BaseModel, Field
 
 from RAG_Applications.scripts import my_tools
@@ -32,7 +32,7 @@ CHROMA_DIR = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Appli
 COLLECTION_NAME = "financial_docs"
 EMBEDDING_MODEL = 'qwen3-embedding:4b'
 BASE_URL = 'http://127.0.0.1:11434'
-LLM_MODEL = "gemma4:26b"
+LLM_MODEL = "deepseek-r1:14b"
 DEBUG_PATH = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/debug_logs"
 
 llm = ChatOllama(model=LLM_MODEL, base_url=BASE_URL, reasoning=True)
@@ -158,6 +158,13 @@ def generate_node(state):
 
     query = get_latest_user_query(state['messages'])
     documents = state.get('retrieved_docs', '')
+    documents = documents[:3000]
+
+    if not documents or documents.strip() == "":
+        print("No documents available for generation")
+        return {
+            "messages": [AIMessage(content="No relevant information found in the documents.")]
+        }
 
     system_prompt = """You are a financial document analyst providing detailed, accurate answers.
 
