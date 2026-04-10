@@ -1,7 +1,7 @@
 # config.py
 import os
 
-LLM_MODEL = "deepseek-r1:14b"
+LLM_MODEL = "qwen3:14b"
 EMBEDDING_MODEL = 'qwen3-embedding:4b'
 BASE_URL = 'http://127.0.0.1:11434'
 
