@@ -142,15 +142,30 @@ def grade_documents_node(state):
     if parsed and "binary_score" in parsed:
         score = parsed["binary_score"]
     else:
-        print("Missing binary_score, defaulting to no")
-        score = "no"
+        print("[GRADE] JSON parsing failed — using fallback heuristic")
+
+        content_lower = response.content.lower()
+
+        if "yes" in content_lower:
+            score = "yes"
+        elif "no" in content_lower:
+            score = "no"
+        else:
+            score = "yes"   # SAFE fallback
 
     score = str(score).lower().strip()
 
     if score == "yes":
+        print("[GRADE] Documents are relevant")
         return {'retrieved_docs': documents}
+
+    elif score == "no":
+        print("[GRADE] Documents marked NOT relevant — but keeping them for safety")
+        return {'retrieved_docs': documents}
+
     else:
-        return {'retrieved_docs': ''}
+        print("[GRADE] Parsing failed — keeping documents")
+        return {'retrieved_docs': documents}
 
 # Generate answer based on retrieved documents
 def generate_node(state):
@@ -158,15 +173,30 @@ def generate_node(state):
 
     query = get_latest_user_query(state['messages'])
     documents = state.get('retrieved_docs', '')
+
+    print(f"[GENERATE] Query: {query}")
+    print(f"[GENERATE] Raw documents length: {len(documents)}")
+
     documents = documents[:3000]
+    print(f"[GENERATE] Trimmed documents length: {len(documents)}")
 
     if not documents or documents.strip() == "":
-        print("No documents available for generation")
+        print("[GENERATE] No documents available for generation")
         return {
             "messages": [AIMessage(content="No relevant information found in the documents.")]
         }
 
-    system_prompt = """You are a financial document analyst providing detailed, accurate answers.
+    system_prompt = """You are a helpful financial document analyst.
+
+                Use ONLY the provided documents to answer the question.
+
+                STRICT RULES:
+                - If answer is found → answer clearly
+                - If partially found → answer what is available
+                - If NOT found → say: "I could not find this information in the provided documents."
+                - DO NOT make up or hallucinate information
+
+                Also provide a concise answer
 
                 OUTPUT FORMAT:
                 Write a comprehensive answer (200-300 words) in MARKDOWN format:
@@ -192,7 +222,7 @@ def generate_node(state):
     user_msg = HumanMessage(query_prompt)
 
     messages = [system_msg, user_msg]
-
+    print("[GENERATE] Sending request to LLM...")
     response = llm.invoke(messages)
 
     os.makedirs(DEBUG_PATH, exist_ok=True)
@@ -200,14 +230,24 @@ def generate_node(state):
         f.write(f"Query: {query}")
         f.write(response.content)
 
+    if not response or not response.content:
+        print("[GENERATE] Empty response from LLM")
+        return {
+            "messages": [AIMessage(content="Unable to generate answer.")]
+        }
+
+    print(f"[GENERATE] Response received (first 200 chars): {response.content[:200]}")
+
     return {
-        'messages': [response]
+        "messages": [AIMessage(content=response.content)]
     }
 
 # Transform the query to produce better search queries
 def transform_query_node(state):
 
+    print("[TRANSFORM] Rewriting query")
     query = get_latest_user_query(state['messages'])
+    print(f"[TRANSFORM] Original query: {query}")
     rewritten_queries = state.get('rewritten_queries', [])
 
     system_prompt = """You are a query re-writer that decomposes complex queries into focused search queries optimized for vectorstore retrieval.
@@ -247,8 +287,8 @@ def transform_query_node(state):
     query_context = f"Original Query: {query}"
     if rewritten_queries:
         query_context = query_context + f"\n\n These queries have been already generated. do not generate same queries again.\n"
-        for idx, query in enumerate(rewritten_queries, 1):
-            query_context = query_context + f"Query {idx}: {query}\n\n"
+        for idx, prev_query in enumerate(rewritten_queries, 1):
+            query_context = query_context + f"Query {idx}: {prev_query}\n\n"
 
     query_context = query_context + "\n\nGenerate 1-3 focused search queries that decompose the original query. Each query should target a specific aspect."
 
@@ -258,6 +298,8 @@ def transform_query_node(state):
     messages = [system_msg, user_msg]
     
     response = llm.invoke(messages)
+    print(f"[TRANSFORM] Raw LLM output: {response.content}")
+
     parsed = robust_json_parser(response.content)
 
     if parsed and "search_queries" in parsed:
@@ -271,9 +313,10 @@ def transform_query_node(state):
         print("Using fallback query")
         queries = [query]
 
+    print(f"[TRANSFORM] Final queries: {queries}")
     return {
-    "rewritten_queries": queries,
-    "retry_count": state.get("retry_count", 0) + 1
+        "rewritten_queries": rewritten_queries + queries,
+        "retry_count": state.get("retry_count", 0) + 1
     }
 
 # ### Router Logic
@@ -325,7 +368,18 @@ def check_answer_quality(state):
     response = llm.invoke(messages)
     parsed = robust_json_parser(response.content)
 
-    hallucination_grade = parsed.get("binary_score", "no") if parsed else "no"
+    if parsed and "binary_score" in parsed:
+        hallucination_grade = parsed["binary_score"]
+    else:
+        print("[HALLUCINATION] JSON parsing failed — using fallback")
+
+        if "yes" in response.content.lower():
+            hallucination_grade = "yes"
+        elif "no" in response.content.lower():
+            hallucination_grade = "no"
+        else:
+            hallucination_grade = "yes"
+
     hallucination_grade = str(hallucination_grade).lower().strip()
 
     # if result is grounded into the facts or retrieved docs
@@ -356,8 +410,16 @@ def check_answer_quality(state):
         if parsed and "binary_score" in parsed:
             answer_grade = parsed["binary_score"]
         else:
-            print("Missing binary_score, defaulting to no")
-            answer_grade = "no"
+            print("[ANSWER] JSON parsing failed — using fallback")
+
+            content_lower = answer_response.content.lower()
+
+            if "yes" in content_lower:
+                answer_grade = "yes"
+            elif "no" in content_lower:
+                answer_grade = "no"
+            else:
+                answer_grade = "yes"
 
         answer_grade = str(answer_grade).lower().strip()
 

@@ -2,8 +2,6 @@
 # web_search
 import os
 
-from pytube import query
-
 # Load API key from Colab secrets
 LANGSMITH_API_KEY = os.environ.get("LANGSMITH_API_KEY")
 
@@ -21,7 +19,6 @@ BASE_URL = 'http://127.0.0.1:11434'
 LLM_MODEL = "qwen3:14b"
 DEBUG_PATH = "/content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/debug_logs"
 
-from duckdb import query
 from langchain_core.tools import tool
 from RAG_Applications.scripts import utils
 

@@ -137,9 +137,28 @@ def generate_ranking_keywords(user_query: str):
             return validated.keywords
         except Exception:
             print("Keyword validation failed:", parsed)
-            return []
-    else:
-        return []
+
+    print("Using dynamic fallback keywords")
+
+    import re
+
+    words = re.findall(r'\b\w+\b', user_query.lower())
+
+    stopwords = {
+        "the", "is", "in", "at", "of", "for", "to", "and",
+        "what", "how", "does", "a", "an", "on", "with"
+    }
+
+    keywords = [w for w in words if w not in stopwords]
+
+    # remove duplicates + take top 5
+    fallback = list(dict.fromkeys(keywords))[:5]
+
+    # final safety fallback
+    if not fallback:
+        fallback = ["financial", "report"]
+
+    return fallback
 
 # ### Search the Doc from Vector DB
 
