@@ -188,15 +188,15 @@ def generate_node(state):
 
     system_prompt = """You are a helpful financial document analyst.
 
-                Use ONLY the provided documents to answer the question.
-
                 STRICT RULES:
+                - Keep answer concise and factual
+                - Answer ONLY using the provided documents
+                - Do NOT use prior knowledge
+                - Do NOT assume or infer missing information
                 - If answer is found → answer clearly
                 - If partially found → answer what is available
                 - If NOT found → say: "I could not find this information in the provided documents."
                 - DO NOT make up or hallucinate information
-
-                Also provide a concise answer
 
                 OUTPUT FORMAT:
                 Write a comprehensive answer (200-300 words) in MARKDOWN format:
@@ -214,7 +214,13 @@ def generate_node(state):
                 CITATIONS:
                 At the end, list references in this format:
                 **References:**
-                1. Company: x, Year: y, Quarter: z, Page: n"""
+                1. Company: x, Year: y, Quarter: z, Page: n
+                
+                DO NOT:
+                - hallucinate
+                - guess
+                - add external knowledge
+                """
     
     query_prompt = f"Retrieved Document: {documents}\n\nUser query: {query}"
 
@@ -352,6 +358,10 @@ def check_answer_quality(state):
     documents = state.get('retrieved_docs', '')
     generation = state['messages'][-1].content
 
+    if "could not find" in generation.lower() or "not found" in generation.lower():
+        print("[ROUTER] Valid 'not found' answer — stopping loop")
+        return END
+
     hallucination_prompt = """You are a grader assessing whether an LLM generation is grounded in / supported by a set of retrieved facts.
                             Respond in JSON format.
 
@@ -372,7 +382,7 @@ def check_answer_quality(state):
         hallucination_grade = parsed["binary_score"]
     else:
         print("[HALLUCINATION] JSON parsing failed — using fallback")
-
+        
         if "yes" in response.content.lower():
             hallucination_grade = "yes"
         elif "no" in response.content.lower():
@@ -431,11 +441,6 @@ def check_answer_quality(state):
             return "transform_query"
 
     else:
-        print("[ROUTER] Generation NOT grounded in the response")
-
-        if retry_count >= 2:
-            print("Max generation retries reached. Returning answer anyway.")
-            return END   # STOP LOOP
-
-        return 'generate'
+        print("[ROUTER] Generation NOT grounded — stopping to avoid loop")
+        return END
 
