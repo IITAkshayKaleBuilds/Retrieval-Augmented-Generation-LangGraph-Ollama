@@ -1,5 +1,3 @@
-# # SQL Agent with LangGraph
-# https://github.com/fracpete/employees-db-sqlite
 
 from typing_extensions import TypedDict, Annotated
 from typing import List
@@ -49,7 +47,7 @@ response.additional_kwargs['reasoning_content']
 # =============================================================================
 
 def get_db_connection():
-    db = SQLDatabase.from_uri('sqlite:////content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/db/employees_db-full-1.0.6.db')
+    db = SQLDatabase.from_uri('sqlite:////content/Retrieval-Augmented-Generation-LangGraph-Ollama/RAG_Applications/db/employees_DataBase.db')
     return db
 
 
